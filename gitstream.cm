@@ -1,11 +1,22 @@
-automation:
- # .cm/gitstream.cm
 automations:
+  # 1. AI Footprint Trigger
+  # Flags PRs as AI-assisted if keywords exist or if created by specific users/bots
   label_ai_usage:
     if:
-      - {{ pr.description | includes(term="AI-generated") or pr.description | includes(term="copilot") }}
+      - {{ pr.description | includes(term="AI-generated") or pr.description | includes(term="Copilot") or pr.branch | includes(term="ai-") }}
     run:
       - action: add-label@v1
         args:
           label: "AI-Assisted"
-          color: 'FBCA04'
+          color: '24db76'
+
+  # 2. Delivery Velocity Trigger (Auto-Approval)
+  # Automatically approves safe/small changes to improve "Cycle Time" and "Review Time"
+  approve_safe_changes:
+    if:
+      - {{ is.formatting or files | allDocs }}
+    run:
+      - action: approve@v1
+      - action: add-label@v1
+        args:
+          label: "fast-track"
