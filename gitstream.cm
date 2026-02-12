@@ -1,8 +1,11 @@
 automation:
-  onPullRequest:
-    - action: review
-      filters:
-        - label: code-review
-    - action: assign
-      filters:
-        - files: ["*.py", "*.csv", "*.json"]
+ # .cm/gitstream.cm
+automations:
+  label_ai_usage:
+    if:
+      - {{ pr.description | includes(term="AI-generated") or pr.description | includes(term="copilot") }}
+    run:
+      - action: add-label@v1
+        args:
+          label: "AI-Assisted"
+          color: 'FBCA04'
